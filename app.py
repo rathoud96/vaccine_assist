@@ -144,9 +144,9 @@ def home():
         fallbacks=[CommandHandler('cancel', cancel)],
     )
     dp.add_handler(conv_handler)
-    app_name = os.environ['APP_URL']
+    app_name = os.environ['APP_NAME']
     updater.start_webhook(listen="0.0.0.0",
-                          port=int(PORT),
+                          port=PORT,
                           url_path=TOKEN)
     updater.bot.setWebhook('https://'+ app_name + '.herokuapp.com/' + TOKEN)
     # updater.start_polling()
