@@ -104,9 +104,12 @@ def vaccine_slot(update, context):
     pin_code = update.message.text
     r.hset(name="vaccine_users", key=update.message.chat.id, value=json.dumps({'pincode': pin_code, 'min_age_limit': context.user_data['min_age_limit']}))
     context.user_data['pincode'] = pin_code
+    header = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0'
+            }
     url = f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pin_code}&date={todays_date}'
 
-    response = requests.get(url)
+    response = requests.get(url, headers=header)
     print(response)
     data = json.loads(response.text)
     count = 0
