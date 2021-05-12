@@ -107,6 +107,7 @@ def vaccine_slot(update, context):
     url = f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pin_code}&date={todays_date}'
 
     response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'})
+    print(response)
     data = json.loads(response.text)
     count = 0
     for center in data["centers"]:
