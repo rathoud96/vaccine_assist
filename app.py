@@ -136,7 +136,7 @@ def home():
     updater.start_webhook(listen="0.0.0.0",
                       port=PORT,
                       url_path=TOKEN)
-    updater.bot.setWebhook(os.environ['APP_URL']+ TOKEN)
+    updater.bot.setWebhook(f'https://{os.environ['APP_URL']}.herokuapp.com/webhook/{TOKEN}')
     updater.start_polling()
     updater.idle()
   
