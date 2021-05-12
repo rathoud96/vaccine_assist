@@ -119,6 +119,10 @@ def cancel(update, _):
 
     return ConversationHandler.END
 
+@app.route('/')
+def index():
+    return "App is running"
+
 def home():
     updater = Updater(TOKEN)
     dp = updater.dispatcher
