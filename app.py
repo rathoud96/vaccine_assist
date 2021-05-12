@@ -119,10 +119,6 @@ def cancel(update, _):
 
     return ConversationHandler.END
 
-@app.route('/')
-def index():
-    return "App is running"
-
 def home():
     updater = Updater(TOKEN)
     dp = updater.dispatcher
@@ -153,4 +149,3 @@ if __name__ == "__main__":
     #     # Not strictly necessary if daemonic mode is enabled but should be done if possible
     #     scheduler.shutdown()
     home()
-    app.run(threaded=True, port=5000)
