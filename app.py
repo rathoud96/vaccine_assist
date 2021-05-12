@@ -29,6 +29,8 @@ VACCINE, AGE = range(2)
 
 TOKEN = os.environ['TOKEN']
 
+PORT = int(os.environ.get('PORT', '8443'))
+
 app = Flask(__name__)
 
 def get_image(type): 
@@ -131,6 +133,10 @@ def home():
         fallbacks=[CommandHandler('cancel', cancel)],
     )
     dp.add_handler(conv_handler)
+    updater.start_webhook(listen="0.0.0.0",
+                      port=PORT,
+                      url_path=Token)
+    updater.bot.setWebhook(os.environ['APP_URL'])
     updater.start_polling()
     updater.idle()
   
