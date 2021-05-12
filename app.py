@@ -55,6 +55,7 @@ def start(update, _):
 
 def get_user_data():
     data = r.hgetall(name="vaccine_users")
+    print(data)
     chat_ids = data.keys()
 
     for chat_id in chat_ids:
@@ -148,3 +149,4 @@ if __name__ == "__main__":
     #     # Not strictly necessary if daemonic mode is enabled but should be done if possible
     #     scheduler.shutdown()
     home()
+    app.run(threaded=True, port=5000)
