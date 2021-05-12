@@ -136,7 +136,7 @@ def home():
     updater.start_webhook(listen="0.0.0.0",
                       port=PORT,
                       url_path=Token)
-    updater.bot.setWebhook(os.environ['APP_URL'])
+    updater.bot.setWebhook(os.environ['APP_URL']+ TOKEN)
     updater.start_polling()
     updater.idle()
   
