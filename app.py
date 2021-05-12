@@ -168,4 +168,3 @@ if __name__ == "__main__":
     #     # Not strictly necessary if daemonic mode is enabled but should be done if possible
     #     scheduler.shutdown()
     home()
-    app.run(host='0.0.0.0', port=PORT)
