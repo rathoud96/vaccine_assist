@@ -18,6 +18,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import redis
 from dotenv import load_dotenv
 import os
+import logging
+
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+
+logger = logging.getLogger(__name__)
 
 global TOKEN
 global r
@@ -137,12 +144,12 @@ def home():
         fallbacks=[CommandHandler('cancel', cancel)],
     )
     dp.add_handler(conv_handler)
-    # updater.start_webhook(listen="0.0.0.0",
-    #                   port=PORT,
-    #                   url_path=TOKEN)
-    # app_name = os.environ['APP_URL']
-    # updater.bot.setWebhook(f'https://{app_name}.herokuapp.com/webhook/{TOKEN}')
-    updater.start_polling()
+    app_name = os.environ['APP_URL']
+    updater.start_webhook(listen="0.0.0.0",
+                          port=int(PORT),
+                          url_path=TOKEN)
+    updater.bot.setWebhook('https://'+ app_name + '.herokuapp.com/' + TOKEN)
+    # updater.start_polling()
     updater.idle()
   
 if __name__ == "__main__":
