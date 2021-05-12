@@ -138,7 +138,7 @@ def home():
                       url_path=TOKEN)
     app_name = os.environ['APP_URL']
     updater.bot.setWebhook(f'https://{app_name}.herokuapp.com/webhook/{TOKEN}')
-    updater.start_polling()
+    # updater.start_polling()
     updater.idle()
   
 if __name__ == "__main__":
