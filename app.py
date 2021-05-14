@@ -2,7 +2,6 @@ import json
 import logging
 import os
 from datetime import datetime
-from time import sleep
 
 import pytz
 import redis
@@ -89,25 +88,41 @@ def age(update, context):
     return VACCINE
 
 
+def invalid_pin(update, context):
+    update.message.reply_text(
+        "Oops! Seems like you have entered invalid pincode, please enter valid one."
+    )
+
+    return VACCINE
+
+
 def vaccine_slot(update, context):
     pin_code = update.message.text
-    chat_id = update.message.chat.id
-    r.hset(
-        name="vaccine_users",
-        key=chat_id,
-        value=json.dumps(
-            {"pincode": pin_code, "min_age_limit": context.user_data["min_age_limit"]}
-        ),
-    )
-    context.user_data["pincode"] = pin_code
-    data = get_vaccine_data(pin_code)
-    is_slots_available = filter_based_on_age_group(
-        chat_id, data, context.user_data["min_age_limit"]
-    )
-    if not is_slots_available:
-        message = "Sorry! Could not find any slots for you.\nI will notify you as soon as slots get available."
-        send(message, chat_id)
-    return ConversationHandler.END
+    response = requests.get(f"https://api.postalpincode.in/pincode/{pin_code}")
+    status = json.loads(response.text)[0]["Status"]
+    if status == "Success":
+        chat_id = update.message.chat.id
+        r.hset(
+            name="vaccine_users",
+            key=chat_id,
+            value=json.dumps(
+                {
+                    "pincode": pin_code,
+                    "min_age_limit": context.user_data["min_age_limit"],
+                }
+            ),
+        )
+        context.user_data["pincode"] = pin_code
+        data = get_vaccine_data(pin_code)
+        is_slots_available = filter_based_on_age_group(
+            chat_id, data, context.user_data["min_age_limit"]
+        )
+        if not is_slots_available:
+            message = "Sorry! Could not find any slots for you.\nI will notify you as soon as slots get available."
+            send(message, chat_id)
+        return ConversationHandler.END
+    else:
+        invalid_pin(update, context)
 
 
 def get_vaccine_data(pincode):
@@ -146,7 +161,12 @@ def home():
         entry_points=[CommandHandler("start", start)],
         states={
             AGE: [MessageHandler(Filters.regex("^(18|45)$"), age)],
-            VACCINE: [MessageHandler(Filters.regex("\d{5}"), vaccine_slot)],
+            VACCINE: [
+                MessageHandler(Filters.regex("^[1-9][0-9]{5}$"), vaccine_slot),
+                MessageHandler(
+                    Filters.regex("\d{1}|\d{2}|\d{3}|\d{4}|[a-z]"), invalid_pin
+                ),
+            ],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
