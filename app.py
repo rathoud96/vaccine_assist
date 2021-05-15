@@ -109,6 +109,7 @@ def vaccine_slot(update, context):
                 {
                     "pincode": pin_code,
                     "min_age_limit": context.user_data["min_age_limit"],
+                    "is_notify": True,
                 }
             ),
         )
@@ -133,6 +134,7 @@ def get_vaccine_data(pincode):
     }
     url = f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={pincode}&date={datetime_NY.strftime("%d-%m-%Y")}'
     response = requests.get(url, headers=header)
+    logger.info(response)
 
     return json.loads(response.text)
 
@@ -154,6 +156,24 @@ def cancel(update, _):
     return ConversationHandler.END
 
 
+def stop(update, context):
+    chat_id = update.message.chat_id
+    r.hset(
+        name="vaccine_users",
+        key=chat_id,
+        value=json.dumps(
+            {
+                "pincode": context.user_data["pincode"],
+                "min_age_limit": context.user_data["min_age_limit"],
+                "is_notify": False,
+            }
+        ),
+    )
+    update.message.reply_text("Bye bye!!!, see you soon")
+
+    return ConversationHandler.END
+
+
 def home():
     updater = Updater(TOKEN)
     dp = updater.dispatcher
@@ -170,6 +190,7 @@ def home():
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
+    dp.add_handler(CommandHandler("stop", stop))
     dp.add_handler(conv_handler)
     # app_name = os.environ['APP_NAME']
     # updater.start_webhook(listen="0.0.0.0",
